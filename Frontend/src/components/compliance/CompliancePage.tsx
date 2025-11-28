@@ -1,17 +1,13 @@
+'use client';
+
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import AppLayout from '../layout/AppLayout';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
 import { Card, CardContent } from '../ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
+import { ClientSelect, SelectItem } from '../ui/client-select';
 import { Search, Filter, AlertCircle, CheckCircle, Clock, Eye } from 'lucide-react';
 
 export default function CompliancePage() {
@@ -178,27 +174,27 @@ export default function CompliancePage() {
               className="pl-10"
             />
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-48">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="complete">Complete</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger className="w-full sm:w-48">
-              <SelectValue placeholder="Priority" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Priority</SelectItem>
-              <SelectItem value="high">High</SelectItem>
-              <SelectItem value="medium">Medium</SelectItem>
-              <SelectItem value="low">Low</SelectItem>
-            </SelectContent>
-          </Select>
+          <ClientSelect 
+            value={statusFilter} 
+            onValueChange={setStatusFilter}
+            placeholder="Status"
+            className="w-full sm:w-48"
+          >
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="complete">Complete</SelectItem>
+          </ClientSelect>
+          <ClientSelect 
+            value={priorityFilter} 
+            onValueChange={setPriorityFilter}
+            placeholder="Priority"
+            className="w-full sm:w-48"
+          >
+            <SelectItem value="all">All Priority</SelectItem>
+            <SelectItem value="high">High</SelectItem>
+            <SelectItem value="medium">Medium</SelectItem>
+            <SelectItem value="low">Low</SelectItem>
+          </ClientSelect>
         </div>
 
         {/* Tasks List */}
@@ -261,7 +257,7 @@ export default function CompliancePage() {
                               Mark Complete
                             </Button>
                           )}
-                          <Link to={`/compliance/${task.id}`}>
+                          <Link href={`/compliance/${task.id}`}>
                             <Button size="sm" variant="ghost" className="gap-2">
                               <Eye className="w-4 h-4" />
                               View Details

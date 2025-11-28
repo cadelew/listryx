@@ -1,5 +1,8 @@
+'use client';
+
 import { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import AppLayout from '../layout/AppLayout';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -10,8 +13,9 @@ import { Badge } from '../ui/badge';
 import { ChevronLeft, Mail, Phone, MapPin, Edit, FileText, Building, MessageSquare } from 'lucide-react';
 
 export default function ClientDetailPage() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id as string;
+  const router = useRouter();
   const [newNote, setNewNote] = useState('');
 
   const client = {
@@ -56,7 +60,7 @@ export default function ClientDetailPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/clients')}>
+            <Button variant="ghost" size="sm" onClick={() => router.push('/clients')}>
               <ChevronLeft className="w-4 h-4" />
             </Button>
             <Avatar className="w-16 h-16">
@@ -114,7 +118,7 @@ export default function ClientDetailPage() {
               <CardContent>
                 <div className="space-y-3">
                   {linkedListings.map((listing) => (
-                    <Link key={listing.id} to={`/listings/${listing.id}`}>
+                    <Link key={listing.id} href={`/listings/${listing.id}`}>
                       <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">

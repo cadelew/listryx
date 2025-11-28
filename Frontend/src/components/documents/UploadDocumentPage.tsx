@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import AppLayout from '../layout/AppLayout';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
@@ -14,7 +16,7 @@ import {
 import { ChevronLeft, Upload, File, X } from 'lucide-react';
 
 export default function UploadDocumentPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [documentType, setDocumentType] = useState('');
   const [linkedListing, setLinkedListing] = useState('');
@@ -44,7 +46,7 @@ export default function UploadDocumentPage() {
 
   const handleUpload = () => {
     alert('Documents uploaded successfully!');
-    navigate('/documents');
+    router.push('/documents');
   };
 
   const formatFileSize = (bytes: number) => {
@@ -60,7 +62,7 @@ export default function UploadDocumentPage() {
       <div className="p-6 max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/documents')}>
+          <Button variant="ghost" size="sm" onClick={() => router.push('/documents')}>
             <ChevronLeft className="w-4 h-4" />
           </Button>
           <div>
@@ -194,7 +196,7 @@ export default function UploadDocumentPage() {
               <Button
                 variant="outline"
                 className="flex-1"
-                onClick={() => navigate('/documents')}
+                onClick={() => router.push('/documents')}
               >
                 Cancel
               </Button>

@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import AppLayout from '../layout/AppLayout';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -113,7 +115,7 @@ export default function DocumentsPage() {
             <h1 className="text-gray-900">Documents</h1>
             <p className="text-gray-600">Manage all your listing and client documents</p>
           </div>
-          <Link to="/documents/upload">
+          <Link href="/documents/upload">
             <Button className="gap-2">
               <Upload className="w-4 h-4" />
               Upload Document
@@ -180,7 +182,7 @@ export default function DocumentsPage() {
                       </p>
 
                       <div className="flex gap-2">
-                        <Link to={`/documents/${doc.id}`}>
+                        <Link href={`/documents/${doc.id}`}>
                           <Button size="sm" variant="outline" className="gap-2">
                             <Eye className="w-4 h-4" />
                             View

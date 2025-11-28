@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useRouter } from 'next/navigation';
 import AppLayout from '../layout/AppLayout';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -17,8 +19,9 @@ import {
 import { ChevronLeft, CheckCircle, Edit, Trash2, Calendar } from 'lucide-react';
 
 export default function TaskDetailPage() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id as string;
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [comment, setComment] = useState('');
 
@@ -49,7 +52,7 @@ export default function TaskDetailPage() {
 
   const deleteTask = () => {
     if (confirm('Are you sure you want to delete this task?')) {
-      navigate('/tasks');
+      router.push('/tasks');
     }
   };
 
@@ -66,7 +69,7 @@ export default function TaskDetailPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/tasks')}>
+            <Button variant="ghost" size="sm" onClick={() => router.push('/tasks')}>
               <ChevronLeft className="w-4 h-4" />
             </Button>
             <div>

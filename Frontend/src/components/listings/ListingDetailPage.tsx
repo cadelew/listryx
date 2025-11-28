@@ -86,7 +86,7 @@ export default function ListingDetailPage() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Link to={`/listings/${id}/photos`}>
+            <Link href={`/listings/${id}/photos`}>
               <Button variant="outline" className="gap-2">
                 <Image className="w-4 h-4" />
                 Manage Photos
@@ -211,13 +211,13 @@ export default function ListingDetailPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid sm:grid-cols-3 gap-3">
-                  <Link to={`/marketing/flyers?listing=${id}`}>
+                  <Link href={`/marketing/flyers?listing=${id}`}>
                     <Button variant="outline" className="w-full gap-2">
                       <FileText className="w-4 h-4" />
                       Generate Flyer
                     </Button>
                   </Link>
-                  <Link to={`/marketing/social-media?listing=${id}`}>
+                  <Link href={`/marketing/social-media?listing=${id}`}>
                     <Button variant="outline" className="w-full gap-2">
                       <Share2 className="w-4 h-4" />
                       Social Post

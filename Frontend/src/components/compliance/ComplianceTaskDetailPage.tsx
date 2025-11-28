@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useRouter } from 'next/navigation';
 import AppLayout from '../layout/AppLayout';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
@@ -9,8 +11,9 @@ import { Checkbox } from '../ui/checkbox';
 import { ChevronLeft, Upload, FileText, AlertTriangle, CheckCircle, Plus } from 'lucide-react';
 
 export default function ComplianceTaskDetailPage() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id as string;
+  const router = useRouter();
   const [notes, setNotes] = useState('');
   const [checklist, setChecklist] = useState([
     { id: 1, item: 'Obtain lead-based paint disclosure form', completed: true },
@@ -56,7 +59,7 @@ export default function ComplianceTaskDetailPage() {
 
   const completeTask = () => {
     alert('Task marked as complete!');
-    navigate('/compliance');
+    router.push('/compliance');
   };
 
   const completedItems = checklist.filter(item => item.completed).length;
@@ -68,7 +71,7 @@ export default function ComplianceTaskDetailPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/compliance')}>
+            <Button variant="ghost" size="sm" onClick={() => router.push('/compliance')}>
               <ChevronLeft className="w-4 h-4" />
             </Button>
             <div>

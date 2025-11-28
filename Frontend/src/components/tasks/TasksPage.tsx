@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import AppLayout from '../layout/AppLayout';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -264,7 +266,7 @@ export default function TasksPage() {
                             Mark Complete
                           </Button>
                         )}
-                        <Link to={`/tasks/${task.id}`}>
+                        <Link href={`/tasks/${task.id}`}>
                           <Button size="sm" variant="ghost" className="gap-2">
                             <Eye className="w-4 h-4" />
                             View

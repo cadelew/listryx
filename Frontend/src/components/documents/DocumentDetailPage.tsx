@@ -1,4 +1,6 @@
-import { useParams, useNavigate } from 'react-router-dom';
+'use client';
+
+import { useParams, useRouter } from 'next/navigation';
 import AppLayout from '../layout/AppLayout';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -6,8 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { ChevronLeft, Download, FileText, Sparkles, Link as LinkIcon, User } from 'lucide-react';
 
 export default function DocumentDetailPage() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id as string;
+  const router = useRouter();
 
   const document = {
     id: 1,
@@ -47,7 +50,7 @@ export default function DocumentDetailPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/documents')}>
+            <Button variant="ghost" size="sm" onClick={() => router.push('/documents')}>
               <ChevronLeft className="w-4 h-4" />
             </Button>
             <div>

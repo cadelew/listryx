@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import AppLayout from '../layout/AppLayout';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -164,7 +166,7 @@ export default function ClientsPage() {
                   </div>
                 </div>
 
-                <Link to={`/clients/${client.id}`}>
+                <Link href={`/clients/${client.id}`}>
                   <Button variant="outline" className="w-full mt-4 gap-2">
                     <Eye className="w-4 h-4" />
                     View Details

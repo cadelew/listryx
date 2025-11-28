@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import AppLayout from '../layout/AppLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -44,8 +43,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <AppLayout>
-      <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -229,7 +227,6 @@ export default function Dashboard() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </AppLayout>
+    </div>
   );
 }
