@@ -1,8 +1,11 @@
+'use client';
+
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Home, Mail } from "lucide-react";
-import { Link } from "react-router-dom";
-import listryx from "figma:asset/876dcc93115a38b84ce3df820b01ca8772ba3d8a.png";
+import Link from "next/link";
+import Image from "next/image";
+import listryx from "@/assets/ChatGPT Image Nov 25, 2025, 11_36_36 PM-Picsart-BackgroundRemover.png";
 
 export function Footer() {
   return (
@@ -32,9 +35,9 @@ export function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           {/* Brand Column */}
           <div className="md:col-span-1">
-            <Link to="/">
+            <Link href="/">
               <div className="flex items-center gap-2 mb-4">
-                <img src={listryx} alt="Listryx" className="h-8 brightness-0 invert" />
+                <Image src={listryx} alt="Listryx" className="h-8 brightness-0 invert" width={32} height={32} />
               </div>
             </Link>
             <p className="text-sm text-gray-400 mb-4">

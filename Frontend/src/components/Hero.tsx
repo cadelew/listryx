@@ -1,10 +1,14 @@
+'use client';
+
 import { Button } from "./ui/button";
 import { ArrowRight, Play } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import landingPageHouse from "@/assets/landing_page_house.jpg";
 
 export function Hero() {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-blue-50 to-white">
@@ -12,11 +16,7 @@ export function Hero() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Content */}
           <div className="space-y-8">
-            <div className="inline-block">
-              <span className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full">
-                AI-Powered Real Estate Platform
-              </span>
-            </div>
+            
             
             <h1 className="text-5xl lg:text-6xl tracking-tight text-gray-900">
               The AI Platform for Modern Real Estate Agents
@@ -28,10 +28,12 @@ export function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="gap-2" onClick={() => navigate('/signup')}>
-                Get Started Free
-                <ArrowRight className="h-4 w-4" />
-              </Button>
+              <Link href="/signup">
+                <Button size="lg" className="gap-2">
+                  Get Started Free
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
               <Button size="lg" variant="outline" className="gap-2">
                 <Play className="h-4 w-4" />
                 Request a Demo
@@ -56,11 +58,11 @@ export function Hero() {
           </div>
 
           {/* Right Column - Hero Image */}
-          <div className="relative lg:h-[600px]">
+          <div className="relative aspect-[3/2] w-full">
             <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/10 to-purple-600/10 rounded-2xl"></div>
-            <div className="relative h-full rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
+            <div className="relative h-full w-full rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
               <ImageWithFallback 
-                src="https://images.unsplash.com/photo-1756435292384-1bf32eff7baf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjByZWFsJTIwZXN0YXRlJTIwaG91c2V8ZW58MXx8fHwxNzYzNTIwMzE1fDA&ixlib=rb-4.1.0&q=80&w=1080"
+                src={landingPageHouse.src || landingPageHouse}
                 alt="Modern real estate platform dashboard"
                 className="w-full h-full object-cover"
               />

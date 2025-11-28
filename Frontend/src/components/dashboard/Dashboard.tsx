@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
 import AppLayout from '../layout/AppLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
@@ -51,7 +53,7 @@ export default function Dashboard() {
             <p className="text-gray-600">Here's what's happening with your listings today</p>
           </div>
           <div className="flex gap-2">
-            <Link to="/listings/create">
+            <Link href="/listings/create">
               <Button className="gap-2">
                 <Plus className="w-4 h-4" />
                 Create Listing
@@ -88,7 +90,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-3 gap-4">
-              <Link to="/listings/create">
+              <Link href="/listings/create">
                 <Button variant="outline" className="w-full justify-start gap-3 h-auto py-4">
                   <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                     <Building className="w-5 h-5 text-blue-600" />
@@ -99,7 +101,7 @@ export default function Dashboard() {
                   </div>
                 </Button>
               </Link>
-              <Link to="/documents/upload">
+              <Link href="/documents/upload">
                 <Button variant="outline" className="w-full justify-start gap-3 h-auto py-4">
                   <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                     <Upload className="w-5 h-5 text-purple-600" />
@@ -110,7 +112,7 @@ export default function Dashboard() {
                   </div>
                 </Button>
               </Link>
-              <Link to="/marketing/ai-description">
+              <Link href="/marketing/ai-description">
                 <Button variant="outline" className="w-full justify-start gap-3 h-auto py-4">
                   <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                     <Sparkles className="w-5 h-5 text-green-600" />
@@ -131,7 +133,7 @@ export default function Dashboard() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Recent Listings</CardTitle>
-                <Link to="/listings">
+                <Link href="/listings">
                   <Button variant="ghost" size="sm" className="gap-1">
                     View all
                     <ArrowRight className="w-4 h-4" />
@@ -158,7 +160,7 @@ export default function Dashboard() {
                     </div>
                     <div>
                       <div className="text-right mb-1">{listing.price}</div>
-                      <Link to={`/listings/${listing.id}`}>
+                      <Link href={`/listings/${listing.id}`}>
                         <Button size="sm" variant="outline">View</Button>
                       </Link>
                     </div>
@@ -173,7 +175,7 @@ export default function Dashboard() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Pending Tasks</CardTitle>
-                <Link to="/tasks">
+                <Link href="/tasks">
                   <Button variant="ghost" size="sm" className="gap-1">
                     View all
                     <ArrowRight className="w-4 h-4" />

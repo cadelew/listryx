@@ -1,4 +1,7 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { 
   Home, 
   Building, 
@@ -29,8 +32,8 @@ interface AppLayoutProps {
 }
 
 export default function AppLayout({ children }: AppLayoutProps) {
-  const location = useLocation();
-  const navigate = useNavigate();
+  const pathname = usePathname();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -85,7 +88,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
   const handleLogout = () => {
     // In a real app, this would clear auth tokens, etc.
-    navigate('/login');
+    router.push('/login');
   };
 
   const navigation = [
@@ -100,8 +103,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
   ];
 
   const isActive = (href: string) => {
-    if (href === '/dashboard') return location.pathname === href;
-    return location.pathname.startsWith(href);
+    if (href === '/dashboard') return pathname === href;
+    return pathname?.startsWith(href) || false;
   };
 
   return (
@@ -118,8 +121,12 @@ export default function AppLayout({ children }: AppLayoutProps) {
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
-            <Link to="/dashboard" className="flex items-center gap-2">
-              <img src={listryx} alt="Listryx" className="h-8" />
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <img 
+                src={listryx.src || listryx} 
+                alt="Listryx" 
+                className="h-8 w-auto object-contain" 
+              />
             </Link>
           </div>
 
@@ -177,7 +184,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                   </div>
                   <div className="p-3 border-t bg-gray-50">
                     <Link 
-                      to="/notifications" 
+                      href="/notifications" 
                       className="text-sm text-blue-600 hover:text-blue-700 flex items-center justify-center gap-1"
                       onClick={() => setNotificationsOpen(false)}
                     >
@@ -216,7 +223,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                   </div>
                   <div className="p-2">
                     <Link
-                      to="/settings"
+                      href="/settings"
                       className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                       onClick={() => setProfileMenuOpen(false)}
                     >
@@ -224,7 +231,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                       <span>Profile Settings</span>
                     </Link>
                     <Link
-                      to="/settings"
+                      href="/settings"
                       className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                       onClick={() => setProfileMenuOpen(false)}
                     >
@@ -259,7 +266,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
               return (
                 <Link
                   key={item.name}
-                  to={item.href}
+                  href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`
                     flex items-center gap-3 px-3 py-2 rounded-lg transition-colors

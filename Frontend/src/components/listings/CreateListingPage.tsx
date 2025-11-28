@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import AppLayout from '../layout/AppLayout';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -17,7 +19,7 @@ import {
 import { ChevronLeft, ChevronRight, Check, Upload, X, Sparkles } from 'lucide-react';
 
 export default function CreateListingPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     address: '',
@@ -83,7 +85,7 @@ export default function CreateListingPage() {
   };
 
   const handleSubmit = () => {
-    navigate('/listings');
+    router.push('/listings');
   };
 
   return (

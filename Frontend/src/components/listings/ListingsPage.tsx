@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
 import { useState } from 'react';
 import AppLayout from '../layout/AppLayout';
 import { Button } from '../ui/button';
@@ -55,7 +57,7 @@ export default function ListingsPage() {
             <h1 className="text-3xl mb-1">Listings</h1>
             <p className="text-gray-600">Manage all your property listings</p>
           </div>
-          <Link to="/listings/create">
+          <Link href="/listings/create">
             <Button className="gap-2">
               <Plus className="w-4 h-4" />
               Create Listing
@@ -151,13 +153,13 @@ export default function ListingsPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <Link to={`/listings/${listing.id}`}>
+                          <Link href={`/listings/${listing.id}`}>
                             <DropdownMenuItem className="gap-2">
                               <Eye className="w-4 h-4" />
                               View Details
                             </DropdownMenuItem>
                           </Link>
-                          <Link to={`/listings/${listing.id}/photos`}>
+                          <Link href={`/listings/${listing.id}/photos`}>
                             <DropdownMenuItem className="gap-2">
                               <Edit className="w-4 h-4" />
                               Manage Photos

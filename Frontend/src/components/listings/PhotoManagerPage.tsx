@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useRouter } from 'next/navigation';
 import AppLayout from '../layout/AppLayout';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -16,8 +18,9 @@ import {
 } from 'lucide-react';
 
 export default function PhotoManagerPage() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id as string;
+  const router = useRouter();
   const [photos, setPhotos] = useState([
     { id: 1, url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800', caption: 'Beautiful front exterior with landscaping' },
     { id: 2, url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800', caption: 'Spacious living room with natural light' },
@@ -57,7 +60,7 @@ export default function PhotoManagerPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate(`/listings/${id}`)}>
+            <Button variant="ghost" size="sm" onClick={() => router.push(`/listings/${id}`)}>
               <ChevronLeft className="w-4 h-4" />
             </Button>
             <div>

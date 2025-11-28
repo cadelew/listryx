@@ -1,13 +1,16 @@
+'use client';
+
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Sparkles, Mail, Lock } from 'lucide-react';
-import listryx from "figma:asset/876dcc93115a38b84ce3df820b01ca8772ba3d8a.png";
+import listryx from "@/assets/ChatGPT Image Nov 25, 2025, 11_36_36 PM-Picsart-BackgroundRemover.png";
 
 export default function LoginPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -19,14 +22,14 @@ export default function LoginPage() {
       return;
     }
     // Simulate login
-    navigate('/dashboard');
+    router.push('/dashboard');
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 mb-6">
+          <Link href="/" className="inline-flex items-center gap-2 mb-6">
             <img src={listryx} alt="Listryx" className="h-10" />
           </Link>
           <h1 className="text-3xl mb-2" style={{ fontFamily: 'Lora, serif' }}>Welcome back</h1>
@@ -76,7 +79,7 @@ export default function LoginPage() {
                 <input type="checkbox" className="rounded" />
                 Remember me
               </label>
-              <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
+              <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
                 Forgot password?
               </Link>
             </div>
@@ -118,7 +121,7 @@ export default function LoginPage() {
 
         <p className="text-center mt-6 text-sm text-gray-600">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-blue-600 hover:underline">
+          <Link href="/signup" className="text-blue-600 hover:underline">
             Sign up for free
           </Link>
         </p>

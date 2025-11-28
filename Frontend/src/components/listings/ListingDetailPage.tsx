@@ -1,5 +1,8 @@
+'use client';
+
 import { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import AppLayout from '../layout/AppLayout';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -21,8 +24,9 @@ import {
 } from 'lucide-react';
 
 export default function ListingDetailPage() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id as string;
+  const router = useRouter();
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [description, setDescription] = useState(
@@ -73,7 +77,7 @@ export default function ListingDetailPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/listings')}>
+            <Button variant="ghost" size="sm" onClick={() => router.push('/listings')}>
               <ChevronLeft className="w-4 h-4" />
             </Button>
             <div>

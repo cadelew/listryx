@@ -1,16 +1,19 @@
-import { Button } from "./ui/button";
-import { Home } from "lucide-react";
-import { Link } from "react-router-dom";
-import listryx from "../assets/ChatGPT Image Nov 25, 2025, 11_36_36 PM-Picsart-BackgroundRemover.png";
+'use client';
 
-export function Navigation() {
+import { Button } from "./ui/button";
+import Link from "next/link";
+import listryx from "@/assets/ChatGPT Image Nov 25, 2025, 11_36_36 PM-Picsart-BackgroundRemover.png";
+
+export default function Navigation() {
   return (
     <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <Link to="/">
-          <div className="flex items-center gap-2">
-            <img src={listryx} alt="Listryx" className="h-8" />
-          </div>
+        <Link href="/" className="flex items-center gap-2">
+          <img 
+            src={listryx.src || listryx} 
+            alt="Listryx" 
+            className="h-8 w-auto object-contain" 
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -31,12 +34,12 @@ export function Navigation() {
 
         {/* CTA Buttons */}
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="ghost" onClick={() => navigate('/login')}>
-            Sign In
-          </Button>
-          <Button onClick={() => navigate('/signup')}>
-            Get Started
-          </Button>
+          <Link href="/login">
+            <Button variant="ghost">Sign In</Button>
+          </Link>
+          <Link href="/signup">
+            <Button>Get Started</Button>
+          </Link>
         </div>
       </div>
     </nav>
