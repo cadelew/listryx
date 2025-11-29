@@ -26,6 +26,7 @@ import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
 import { useState, useRef, useEffect } from 'react';
 import listryx from "../../assets/ChatGPT Image Nov 25, 2025, 11_36_36 PM-Picsart-BackgroundRemover.png";
+import { useAuth } from '@/contexts/AuthContext';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -39,6 +40,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
+  const { user, loading, signOut } = useAuth();
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -54,6 +56,12 @@ export default function AppLayout({ children }: AppLayoutProps) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/login');
+    }
+  }, [loading, user, router]);
 
   const notifications = [
     {
@@ -86,9 +94,13 @@ export default function AppLayout({ children }: AppLayoutProps) {
     },
   ];
 
-  const handleLogout = () => {
-    // In a real app, this would clear auth tokens, etc.
-    router.push('/login');
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      router.replace('/login');
+    } catch (error) {
+      console.error('Error signing out', error);
+    }
   };
 
   const navigation = [
@@ -106,6 +118,26 @@ export default function AppLayout({ children }: AppLayoutProps) {
     if (href === '/dashboard') return pathname === href;
     return pathname?.startsWith(href) || false;
   };
+
+  const fullName =
+    (user?.user_metadata?.full_name as string | undefined)?.trim() ||
+    user?.email ||
+    'Listryx User';
+  const initials = fullName
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('') || 'LX';
+  const email = user?.email ?? 'your@email.com';
+
+  if (loading || !user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-500 text-sm">Checking authentication…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -203,7 +235,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 className="focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full"
               >
                 <Avatar className="cursor-pointer">
-                  <AvatarFallback>JD</AvatarFallback>
+                  <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
               </button>
               
@@ -213,11 +245,11 @@ export default function AppLayout({ children }: AppLayoutProps) {
                   <div className="p-4 border-b">
                     <div className="flex items-center gap-3">
                       <Avatar>
-                        <AvatarFallback>JD</AvatarFallback>
+                        <AvatarFallback>{initials}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-gray-900 truncate">John Doe</p>
-                        <p className="text-xs text-gray-500 truncate">john.doe@email.com</p>
+                        <p className="text-sm text-gray-900 truncate">{fullName}</p>
+                        <p className="text-xs text-gray-500 truncate">{email}</p>
                       </div>
                     </div>
                   </div>

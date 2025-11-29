@@ -15,8 +15,16 @@ import {
   Upload,
   MessageSquare
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Dashboard() {
+  const { user } = useAuth();
+  
+  // Get user's full name from metadata or email as fallback
+  const fullName =
+    (user?.user_metadata?.full_name as string | undefined)?.trim() ||
+    user?.email?.split('@')[0] ||
+    'there';
   const stats = [
     { label: 'Active Listings', value: '12', icon: Building, color: 'text-blue-600', bg: 'bg-blue-100' },
     { label: 'Pending Tasks', value: '8', icon: AlertCircle, color: 'text-orange-600', bg: 'bg-orange-100' },
@@ -47,7 +55,7 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl mb-1">Welcome back, John</h1>
+            <h1 className="text-3xl mb-1">Welcome back, {fullName}</h1>
             <p className="text-gray-600">Here's what's happening with your listings today</p>
           </div>
           <div className="flex gap-2">

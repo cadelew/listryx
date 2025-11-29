@@ -5,16 +5,29 @@ import Link from 'next/link';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { Sparkles, Mail, ArrowLeft } from 'lucide-react';
+import { Mail, ArrowLeft, Loader2 } from 'lucide-react';
 import listryx from "@/assets/ChatGPT Image Nov 25, 2025, 11_36_36 PM-Picsart-BackgroundRemover.png";
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { resetPassword } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setError('');
+    setIsSubmitting(true);
+    try {
+      await resetPassword(email);
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to process your request. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -22,7 +35,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
-            <img src={listryx} alt="Listryx" className="h-10" />
+            <img src={typeof listryx === 'string' ? listryx : listryx.src} alt="Listryx" className="h-10" />
           </Link>
           <h1 className="text-3xl mb-2" style={{ fontFamily: 'Lora, serif' }}>Reset your password</h1>
           <p className="text-gray-600" style={{ fontFamily: 'Source Sans 3, sans-serif' }}>
@@ -48,6 +61,11 @@ export default function ForgotPasswordPage() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+                  {error}
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
@@ -64,8 +82,15 @@ export default function ForgotPasswordPage() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full">
-                Send reset link
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending link...
+                  </>
+                ) : (
+                  'Send reset link'
+                )}
               </Button>
 
               <Link href="/login">

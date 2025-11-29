@@ -318,11 +318,11 @@ USING (
 
 ## Step 6: Configure Your Frontend
 
-Create a `.env` file in your `Frontend` directory:
+Create a `.env.local` file in your `Frontend` directory (Next.js automatically loads it):
 
 ```env
-VITE_SUPABASE_URL=https://your-project-id.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key-here
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
 **Important**: Never commit your `.env` file to version control. Add it to `.gitignore`.
@@ -337,13 +337,13 @@ npm install @supabase/supabase-js
 
 ## Step 8: Create Supabase Client File
 
-Create `Frontend/src/lib/supabase.ts`:
+Create `Frontend/src/lib/supabaseClient.ts`:
 
 ```typescript
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables')
@@ -357,7 +357,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 Create a test file or add to your app initialization:
 
 ```typescript
-import { supabase } from './lib/supabase'
+import { supabase } from './lib/supabaseClient'
 
 // Test connection
 const testConnection = async () => {
