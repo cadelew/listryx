@@ -7,12 +7,11 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import { Badge } from '../ui/badge';
 import { 
   User, 
   Building, 
-  Palette, 
   CreditCard, 
   Upload,
   Plus,
@@ -30,6 +29,7 @@ type ProfileData = {
   full_name: string | null;
   email: string | null;
   phone: string | null;
+  avatar_url: string | null;
 };
 
 export default function SettingsPage() {
@@ -41,12 +41,16 @@ export default function SettingsPage() {
     full_name: null,
     email: null,
     phone: null,
+    avatar_url: null,
   });
   const [originalProfile, setOriginalProfile] = useState<ProfileData>({
     full_name: null,
     email: null,
     phone: null,
+    avatar_url: null,
   });
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   // Fetch profile data from Supabase
   useEffect(() => {
@@ -78,7 +82,7 @@ export default function SettingsPage() {
         // If that doesn't work, fall back to explicit filter
         let { data, error } = await supabase
           .from('profiles')
-          .select('full_name, email, phone')
+          .select('full_name, email, phone, avatar_url')
           .eq('id', user.id)
           .single();
 
@@ -87,7 +91,7 @@ export default function SettingsPage() {
           console.log('Got 403 with explicit filter, trying without filter (RLS only)...');
           const result = await supabase
             .from('profiles')
-            .select('full_name, email, phone')
+            .select('full_name, email, phone, avatar_url')
             .single();
           data = result.data;
           error = result.error;
@@ -99,11 +103,13 @@ export default function SettingsPage() {
             full_name: data.full_name,
             email: data.email || user.email || null,
             phone: data.phone,
+            avatar_url: data.avatar_url,
           });
           setOriginalProfile({
             full_name: data.full_name,
             email: data.email || user.email || null,
             phone: data.phone,
+            avatar_url: data.avatar_url,
           });
         } else if (error) {
           // Log full error details for debugging
@@ -132,7 +138,7 @@ export default function SettingsPage() {
                 full_name: user.user_metadata?.full_name || null,
                 phone: null,
               })
-              .select('full_name, email, phone')
+              .select('full_name, email, phone, avatar_url')
               .single();
 
             if (insertError) {
@@ -142,22 +148,26 @@ export default function SettingsPage() {
                 full_name: user.user_metadata?.full_name || null,
                 email: user.email || null,
                 phone: null,
+                avatar_url: null,
               });
               setOriginalProfile({
                 full_name: user.user_metadata?.full_name || null,
                 email: user.email || null,
                 phone: null,
+                avatar_url: null,
               });
             } else if (newProfile) {
               setProfile({
                 full_name: newProfile.full_name,
                 email: newProfile.email || user.email || null,
                 phone: newProfile.phone,
+                avatar_url: newProfile.avatar_url || null,
               });
               setOriginalProfile({
                 full_name: newProfile.full_name,
                 email: newProfile.email || user.email || null,
                 phone: newProfile.phone,
+                avatar_url: newProfile.avatar_url || null,
               });
               return; // Successfully created and set profile
             }
@@ -174,7 +184,7 @@ export default function SettingsPage() {
                 full_name: user.user_metadata?.full_name || null,
                 phone: null,
               })
-              .select('full_name, email, phone')
+              .select('full_name, email, phone, avatar_url')
               .single();
 
             if (insertError) {
@@ -184,22 +194,26 @@ export default function SettingsPage() {
                 full_name: user.user_metadata?.full_name || null,
                 email: user.email || null,
                 phone: null,
+                avatar_url: null,
               });
               setOriginalProfile({
                 full_name: user.user_metadata?.full_name || null,
                 email: user.email || null,
                 phone: null,
+                avatar_url: null,
               });
             } else if (newProfile) {
               setProfile({
                 full_name: newProfile.full_name,
                 email: newProfile.email || user.email || null,
                 phone: newProfile.phone,
+                avatar_url: newProfile.avatar_url || null,
               });
               setOriginalProfile({
                 full_name: newProfile.full_name,
                 email: newProfile.email || user.email || null,
                 phone: newProfile.phone,
+                avatar_url: newProfile.avatar_url || null,
               });
             }
           } else {
@@ -208,11 +222,13 @@ export default function SettingsPage() {
               full_name: user.user_metadata?.full_name || null,
               email: user.email || null,
               phone: null,
+              avatar_url: null,
             });
             setOriginalProfile({
               full_name: user.user_metadata?.full_name || null,
               email: user.email || null,
               phone: null,
+              avatar_url: null,
             });
           }
         }
@@ -223,11 +239,13 @@ export default function SettingsPage() {
           full_name: user.user_metadata?.full_name || null,
           email: user.email || null,
           phone: null,
+          avatar_url: null,
         });
         setOriginalProfile({
           full_name: user.user_metadata?.full_name || null,
           email: user.email || null,
           phone: null,
+          avatar_url: null,
         });
       } finally {
         setIsLoading(false);
@@ -245,7 +263,67 @@ export default function SettingsPage() {
 
   const handleCancel = () => {
     setProfile({ ...originalProfile });
+    setAvatarPreview(null);
     setIsEditing(false);
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size must be less than 5MB');
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+    try {
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+
+      // Generate unique file name
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      const filePath = `${user.id}/${fileName}`;
+
+      // Upload to Supabase storage
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+
+      if (uploadError) {
+        console.error('Error uploading avatar:', uploadError);
+        alert('Failed to upload avatar. Please try again.');
+        return;
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      // Update profile with new avatar URL
+      setProfile({ ...profile, avatar_url: publicUrl });
+    } catch (err) {
+      console.error('Error uploading avatar:', err);
+      alert('Failed to upload avatar. Please try again.');
+    } finally {
+      setIsUploadingAvatar(false);
+    }
   };
 
   const handleSave = async () => {
@@ -258,6 +336,7 @@ export default function SettingsPage() {
         .update({
           full_name: profile.full_name || null,
           phone: profile.phone || null,
+          avatar_url: profile.avatar_url || null,
           // Note: email is typically managed by auth, but we can update it in profiles if needed
           email: profile.email || user.email || null,
         })
@@ -312,12 +391,6 @@ export default function SettingsPage() {
     mls: 'MLS-12345',
   });
 
-  const [branding, setBranding] = useState({
-    logoUrl: '',
-    primaryColor: '#3b82f6',
-    secondaryColor: '#8b5cf6',
-  });
-
   const teamMembers = [
     { id: 1, name: 'Mike Wilson', email: 'mike@realty.com', role: 'Agent' },
     { id: 2, name: 'Sarah Parker', email: 'sarah@realty.com', role: 'Agent' },
@@ -334,7 +407,6 @@ export default function SettingsPage() {
       'AI description generation',
       'Advanced analytics',
       'Priority support',
-      'Custom branding',
     ],
   };
 
@@ -348,7 +420,7 @@ export default function SettingsPage() {
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile" className="gap-2">
               <User className="w-4 h-4" />
               <span className="hidden sm:inline">Profile</span>
@@ -356,10 +428,6 @@ export default function SettingsPage() {
             <TabsTrigger value="brokerage" className="gap-2">
               <Building className="w-4 h-4" />
               <span className="hidden sm:inline">Brokerage</span>
-            </TabsTrigger>
-            <TabsTrigger value="branding" className="gap-2">
-              <Palette className="w-4 h-4" />
-              <span className="hidden sm:inline">Branding</span>
             </TabsTrigger>
             <TabsTrigger value="subscription" className="gap-2">
               <CreditCard className="w-4 h-4" />
@@ -391,15 +459,48 @@ export default function SettingsPage() {
                   <>
                     <div className="flex items-center gap-6">
                       <Avatar className="w-20 h-20">
+                        {(avatarPreview || profile.avatar_url) && (
+                          <AvatarImage 
+                            src={avatarPreview || profile.avatar_url || ''} 
+                            alt={profile.full_name || 'Profile picture'} 
+                          />
+                        )}
                         <AvatarFallback className="bg-gradient-to-br from-blue-600 to-purple-600 text-white text-2xl">
                           {getInitials()}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <Button variant="outline" size="sm" className="gap-2" disabled={!isEditing}>
-                          <Upload className="w-4 h-4" />
-                          Upload Photo
-                        </Button>
+                        <input
+                          type="file"
+                          id="avatar-upload"
+                          accept="image/*"
+                          onChange={handleAvatarUpload}
+                          className="hidden"
+                          disabled={!isEditing || isUploadingAvatar}
+                        />
+                        <label htmlFor="avatar-upload">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className={`gap-2 ${!isEditing ? 'cursor-not-allowed opacity-50 hover:opacity-50 hover:bg-transparent' : 'cursor-pointer'}`}
+                            disabled={!isEditing || isUploadingAvatar}
+                            asChild
+                          >
+                            <span>
+                              {isUploadingAvatar ? (
+                                <>
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                  Uploading...
+                                </>
+                              ) : (
+                                <>
+                                  <Upload className="w-4 h-4" />
+                                  Upload Photo
+                                </>
+                              )}
+                            </span>
+                          </Button>
+                        </label>
                         <p className="text-sm text-gray-500 mt-2">JPG, PNG or GIF (max. 5MB)</p>
                       </div>
                     </div>
@@ -573,90 +674,6 @@ export default function SettingsPage() {
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
-
-          {/* Branding Settings */}
-          <TabsContent value="branding">
-            <Card>
-              <CardHeader>
-                <CardTitle>Branding Settings</CardTitle>
-                <CardDescription>Customize your marketing materials</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label>Logo</Label>
-                  <div className="flex items-center gap-4">
-                    <div className="w-32 h-32 border-2 border-dashed rounded-lg flex items-center justify-center bg-gray-50">
-                      <Upload className="w-8 h-8 text-gray-400" />
-                    </div>
-                    <div>
-                      <Button variant="outline" size="sm" className="gap-2">
-                        <Upload className="w-4 h-4" />
-                        Upload Logo
-                      </Button>
-                      <p className="text-sm text-gray-500 mt-2">PNG or SVG (max. 2MB)</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="primaryColor">Primary Color</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="primaryColor"
-                        type="color"
-                        value={branding.primaryColor}
-                        onChange={(e) => setBranding({ ...branding, primaryColor: e.target.value })}
-                        className="w-16 h-10 p-1"
-                      />
-                      <Input
-                        value={branding.primaryColor}
-                        onChange={(e) => setBranding({ ...branding, primaryColor: e.target.value })}
-                        className="flex-1"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="secondaryColor">Secondary Color</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="secondaryColor"
-                        type="color"
-                        value={branding.secondaryColor}
-                        onChange={(e) => setBranding({ ...branding, secondaryColor: e.target.value })}
-                        className="w-16 h-10 p-1"
-                      />
-                      <Input
-                        value={branding.secondaryColor}
-                        onChange={(e) => setBranding({ ...branding, secondaryColor: e.target.value })}
-                        className="flex-1"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Template Preview</Label>
-                  <div 
-                    className="h-48 rounded-lg border flex items-center justify-center text-white"
-                    style={{ 
-                      background: `linear-gradient(135deg, ${branding.primaryColor} 0%, ${branding.secondaryColor} 100%)`
-                    }}
-                  >
-                    <div className="text-center">
-                      <p className="text-2xl mb-2">ListingAI Pro</p>
-                      <p className="text-sm opacity-90">Your marketing materials preview</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <Button>Save Changes</Button>
-                  <Button variant="outline">Reset to Default</Button>
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
 
           {/* Subscription Settings */}

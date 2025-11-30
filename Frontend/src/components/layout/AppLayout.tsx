@@ -15,18 +15,18 @@ import {
   Search,
   Menu,
   X,
-  User,
   LogOut,
   ChevronRight
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
 import { useState, useRef, useEffect } from 'react';
 import listryx from "../../assets/ChatGPT Image Nov 25, 2025, 11_36_36 PM-Picsart-BackgroundRemover.png";
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabaseClient';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -38,6 +38,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
   const { user, loading, signOut } = useAuth();
@@ -118,6 +119,27 @@ export default function AppLayout({ children }: AppLayoutProps) {
     if (href === '/dashboard') return pathname === href;
     return pathname?.startsWith(href) || false;
   };
+
+  // Fetch avatar URL from profile
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      if (!user) return;
+      
+      const { data } = await supabase
+        .from('profiles')
+        .select('avatar_url')
+        .eq('id', user.id)
+        .single();
+      
+      if (data?.avatar_url) {
+        setAvatarUrl(data.avatar_url);
+      }
+    };
+    
+    if (user) {
+      fetchAvatar();
+    }
+  }, [user]);
 
   const fullName =
     (user?.user_metadata?.full_name as string | undefined)?.trim() ||
@@ -235,6 +257,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 className="focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full"
               >
                 <Avatar className="cursor-pointer">
+                  {avatarUrl && <AvatarImage src={avatarUrl} alt={fullName} />}
                   <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
               </button>
@@ -245,6 +268,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                   <div className="p-4 border-b">
                     <div className="flex items-center gap-3">
                       <Avatar>
+                        {avatarUrl && <AvatarImage src={avatarUrl} alt={fullName} />}
                         <AvatarFallback>{initials}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
@@ -253,15 +277,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                       </div>
                     </div>
                   </div>
-                  <div className="p-2">
-                    <Link
-                      href="/settings"
-                      className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-                      onClick={() => setProfileMenuOpen(false)}
-                    >
-                      <User className="w-4 h-4" />
-                      <span>Profile Settings</span>
-                    </Link>
+                  <div className="px-2 pb-2">
                     <Link
                       href="/settings"
                       className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
